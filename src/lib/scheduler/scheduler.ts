@@ -99,6 +99,18 @@ export function generateSchedule(
   for (let index = 0; index < futurePlan.length; index += 1) {
     projectedInventory =
       projectedInventory + futurePlan[index] - internalConfig.expectedDailyConsumption;
+    
+        let capacityBreached = false;
+      
+    if (internalConfig.maxCapacity !== undefined && projectedInventory > internalConfig.maxCapacity) {
+      warnings.add("CAPACITY_BREACH");
+      infeasible = true;
+      capacityBreached = true;
+      explanation.push(
+        `Day ${lockedCount + index + 1}: Inventory (${fromTenths(projectedInventory)}) exceeded maximum tank capacity (${fromTenths(internalConfig.maxCapacity)}).`
+      );
+    }
+    
     schedule.push({
       day: lockedCount + index + 1,
       plannedDelivery: fromTenths(futurePlan[index]),
@@ -110,10 +122,6 @@ export function generateSchedule(
   const futureDeliveryTotal = futurePlan.reduce((total, value) => total + value, 0);
   const projectedEndInventory = currentInventory + futureDeliveryTotal -
     internalConfig.expectedDailyConsumption * remainingDays;
-
-  if (projectedEndInventory > 0) {
-    warnings.add("POSITIVE_END_INVENTORY");
-  }
 
   const nominalRemainingTarget = Math.max(
     0,

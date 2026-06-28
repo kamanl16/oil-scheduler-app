@@ -92,6 +92,42 @@ describe("generateSchedule", () => {
     ]);
     expect(result.warnings).toContain("NOMINATION_OVERSHOOT");
   });
+  
+  it("flags CAPACITY_BREACH if a locked actual exceeds maximum tank capacity", () => {
+    const result = generateSchedule(
+      {
+        days: 5,
+        nomination: 100,
+        unitSize: 50,
+        startingInventory: 100,
+        expectedDailyConsumption: 10,
+        maxCapacity: 150,
+      },
+      [{ day: 1, actualDelivery: 100, actualConsumption: 10 }] 
+    );
+
+    // 100 (start) + 100 (actual delivery) - 10 (actual consumption) = 190
+    // This breaches the maximum capacity of 150.
+    expect(result.infeasible).toBe(true);
+    expect(result.warnings).toContain("CAPACITY_BREACH");
+    expect(result.explanation.some(e => e.includes("exceeded maximum tank capacity"))).toBe(true);
+  });
+
+  it("does not flag CAPACITY_BREACH if inventory stays exactly at or below max capacity", () => {
+    const result = generateSchedule({
+      days: 5,
+      nomination: 100,
+      unitSize: 50,
+      startingInventory: 150,
+      expectedDailyConsumption: 50,
+      maxCapacity: 150,
+    });
+
+    // Day 1: 150 (start) + 50 (delivery) - 50 (consumption) = 150
+    // Exactly at capacity, so it should not flag a breach.
+    expect(result.warnings).not.toContain("CAPACITY_BREACH");
+    expect(result.infeasible).toBe(false);
+  });
 
   it("reports nomination infeasibility", () => {
     const result = generateSchedule({
@@ -105,6 +141,8 @@ describe("generateSchedule", () => {
     expect(result.infeasible).toBe(true);
     expect(result.warnings).toContain("NOMINATION_INFEASIBLE");
   });
+
+
 
   it("handles decimal actuals without floating-point residue", () => {
     const result = generateSchedule(

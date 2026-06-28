@@ -84,8 +84,6 @@ const warningLabel: Record<SchedulerWarning, string> = {
     "Locked actuals and forecast demand require deliveries outside the nominal target.",
   HISTORICAL_STOCKOUT:
     "Recorded actuals already produced a negative end-of-day inventory.",
-  POSITIVE_END_INVENTORY:
-    "Projected end inventory is positive because deliveries are quantized by unit size.",
   CAPACITY_BREACH:
     "Projected or historical inventory exceeded the maximum tank capacity.",
 };

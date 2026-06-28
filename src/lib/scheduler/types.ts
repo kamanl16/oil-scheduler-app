@@ -29,7 +29,6 @@ export type SchedulerWarning =
   | "NOMINATION_INFEASIBLE"
   | "NOMINATION_OVERSHOOT"
   | "HISTORICAL_STOCKOUT"
-  | "POSITIVE_END_INVENTORY"
   | "CAPACITY_BREACH";
 
 export type SchedulerResult = {
