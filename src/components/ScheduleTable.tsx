@@ -45,7 +45,8 @@ export function ScheduleTable({
               schedule.map((day) => {
                 const isCurrent = nextUnlockedDay?.day === day.day;
                 return (
-                  <tr key={day.day}>
+                  <tr key={day.day}
+                    className={day.capacityBreached ? "error" : ""}>
                     <td>{day.day}</td>
                     <td>
                       <span

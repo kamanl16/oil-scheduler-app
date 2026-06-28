@@ -69,9 +69,12 @@ export function generateSchedule(
       warnings.add("HISTORICAL_STOCKOUT");
     }
 
+    let capacityBreached = false;
+    
     if (internalConfig.maxCapacity !== undefined && currentInventory > internalConfig.maxCapacity) {
       warnings.add("CAPACITY_BREACH");
       infeasible = true;
+      capacityBreached = true;
       explanation.push(
         `Day ${actual.day}: Inventory (${fromTenths(currentInventory)}) exceeded maximum tank capacity (${fromTenths(internalConfig.maxCapacity)}).`
       );
@@ -84,6 +87,7 @@ export function generateSchedule(
       actualConsumption: fromTenths(actual.actualConsumption),
       endInventory: fromTenths(currentInventory),
       isLocked: true,
+      capacityBreached,
     });
   }
 
@@ -100,7 +104,7 @@ export function generateSchedule(
     projectedInventory =
       projectedInventory + futurePlan[index] - internalConfig.expectedDailyConsumption;
     
-        let capacityBreached = false;
+    let capacityBreached = false;
       
     if (internalConfig.maxCapacity !== undefined && projectedInventory > internalConfig.maxCapacity) {
       warnings.add("CAPACITY_BREACH");
@@ -116,6 +120,7 @@ export function generateSchedule(
       plannedDelivery: fromTenths(futurePlan[index]),
       endInventory: fromTenths(projectedInventory),
       isLocked: false,
+      capacityBreached,
     });
   }
 

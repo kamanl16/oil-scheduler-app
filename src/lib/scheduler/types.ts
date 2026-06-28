@@ -23,6 +23,7 @@ export type ScheduleDay = {
   actualConsumption?: number;
   endInventory: number;
   isLocked: boolean;
+  capacityBreached?: boolean;
 };
 
 export type SchedulerWarning =
