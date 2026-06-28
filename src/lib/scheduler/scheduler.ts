@@ -12,6 +12,7 @@ type InternalConfig = {
   unitSize: number;
   startingInventory: number;
   expectedDailyConsumption: number;
+  maxCapacity?: number;
 };
 
 type InternalLockedActual = {
@@ -67,6 +68,15 @@ export function generateSchedule(
     if (currentInventory < 0) {
       warnings.add("HISTORICAL_STOCKOUT");
     }
+
+    if (internalConfig.maxCapacity !== undefined && currentInventory > internalConfig.maxCapacity) {
+      warnings.add("CAPACITY_BREACH");
+      infeasible = true;
+      explanation.push(
+        `Day ${actual.day}: Inventory (${fromTenths(currentInventory)}) exceeded maximum tank capacity (${fromTenths(internalConfig.maxCapacity)}).`
+      );
+    }
+
     schedule.push({
       day: actual.day,
       plannedDelivery: fromTenths(actual.plannedDelivery),
@@ -265,6 +275,7 @@ function validateConfig(config: SchedulerConfig | undefined): InternalConfig {
       config.expectedDailyConsumption,
       "Expected daily consumption",
     ),
+    maxCapacity: config.maxCapacity !== undefined ? toNonNegativeTenths(config.maxCapacity, "Maximum capacity") : undefined
   };
 }
 
