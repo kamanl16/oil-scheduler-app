@@ -3,6 +3,7 @@ import { useScheduler } from "./hooks/useScheduler";
 import { SchedulerForm } from "./components/SchedulerForm";
 import { ScheduleTable } from "./components/ScheduleTable";
 import { SummaryPanel } from "./components/SummaryPanel";
+import { ScheduleChart } from "./components/ScheduleChart";
 
 export default function App() {
   const {
@@ -42,6 +43,12 @@ export default function App() {
             onGenerateNoise={handleGenerateNoise}
             onLockNextDay={handleLockNextDay}
           />
+          {result && (
+            <ScheduleChart 
+              schedule={result.schedule}
+              maxCapacity={config.maxCapacity}
+            />
+          )}
         </div>
       </div>
     </main>
