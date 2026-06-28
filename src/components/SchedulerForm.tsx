@@ -88,9 +88,6 @@ export function SchedulerForm({
           Reset
         </button>
       </div>
-      <p className="helper-text">
-        Defaults use the worked example from the assignment.
-      </p>
     </section>
   );
 }

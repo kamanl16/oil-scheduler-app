@@ -1,7 +1,6 @@
 import type {
   LockedActual,
-  SchedulerResult,
-  SchedulerWarning,
+  SchedulerResult
 } from "../lib/scheduler/types";
 
 type SummaryPanelProps = {
@@ -51,19 +50,6 @@ export function SummaryPanel({ result, lockedActuals }: SummaryPanelProps) {
           value={result?.infeasible ? "Infeasible" : result ? "Planned" : "-"}
         />
       </div>
-
-      <div className="warnings">
-        {result?.warnings.map((warning) => (
-          <div className="warning" key={warning}>
-            {warningLabel[warning]}
-          </div>
-        ))}
-        {result?.explanation.map((line) => (
-          <div className="note" key={line}>
-            {line}
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
@@ -76,17 +62,6 @@ function Metric({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
-const warningLabel: Record<SchedulerWarning, string> = {
-  NOMINATION_INFEASIBLE:
-    "Nomination cannot cover forecast demand under the chosen planning target.",
-  NOMINATION_OVERSHOOT:
-    "Locked actuals and forecast demand require deliveries outside the nominal target.",
-  HISTORICAL_STOCKOUT:
-    "Recorded actuals already produced a negative end-of-day inventory.",
-  CAPACITY_BREACH:
-    "Projected or historical inventory exceeded the maximum tank capacity.",
-};
 
 function formatVolume(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1);

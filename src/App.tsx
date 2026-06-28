@@ -4,6 +4,7 @@ import { SchedulerForm } from "./components/SchedulerForm";
 import { ScheduleTable } from "./components/ScheduleTable";
 import { SummaryPanel } from "./components/SummaryPanel";
 import { ScheduleChart } from "./components/ScheduleChart";
+import { WarningPanel } from "./components/WarningPanel";
 
 export default function App() {
   const {
@@ -18,9 +19,9 @@ export default function App() {
       <header className="page-header">
         <div>
           <h1>Oil Delivery Scheduler</h1>
-          <p>Plan monthly deliveries, lock daily actuals, and replan the future.</p>
         </div>
       </header>
+      <WarningPanel result={result} />
 
       <div className="layout-grid">
         <SchedulerForm
