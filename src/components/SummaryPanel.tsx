@@ -1,6 +1,6 @@
 import type {
   LockedActual,
-  SchedulerResult
+  SchedulerResult,
 } from "../lib/scheduler/types";
 
 type SummaryPanelProps = {
@@ -26,8 +26,12 @@ export function SummaryPanel({ result, lockedActuals }: SummaryPanelProps) {
       <h2>Summary</h2>
       <div className="summary-grid">
         <Metric
-          label="Current actual inventory"
-          value={result ? formatVolume(result.currentInventory) : "-"}
+          label="Schedule status"
+          value={result?.infeasible ? "Infeasible" : result ? "Planned" : "-"}
+        />
+        <Metric
+          label="Expected daily consumption"
+          value={result ? formatVolume(result.expectedDailyConsumption) : "-"}
         />
         <Metric
           label="Projected end inventory"
@@ -44,10 +48,6 @@ export function SummaryPanel({ result, lockedActuals }: SummaryPanelProps) {
         <Metric
           label="Total projected deliveries"
           value={formatVolume(totalProjectedDeliveries)}
-        />
-        <Metric
-          label="Schedule status"
-          value={result?.infeasible ? "Infeasible" : result ? "Planned" : "-"}
         />
       </div>
     </section>

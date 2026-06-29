@@ -2,13 +2,13 @@ import type { SchedulerResult, SchedulerWarning } from "../lib/scheduler/types";
 
 const warningLabel: Record<SchedulerWarning, string> = {
   NOMINATION_INFEASIBLE:
-    "Nomination cannot cover forecast demand under the chosen planning target.",
+    "[NOMINATION INFEASIBLE] Nomination cannot cover forecast demand under the chosen planning target.",
   NOMINATION_OVERSHOOT:
-    "Locked actuals and forecast demand require deliveries outside the nominal target.",
+    "[NOMINATIONOVERSHOOT] Locked actuals and forecast demand require deliveries outside the nominal target.",
   HISTORICAL_STOCKOUT:
-    "Recorded actuals already produced a negative end-of-day inventory.",
+    "[HISTORICAL STOCKOUT] Recorded actuals already produced a negative end-of-day inventory.",
   CAPACITY_BREACH:
-    "Projected or historical inventory exceeded the maximum tank capacity.",
+    "[CAPACITY BREACH] Projected or historical inventory exceeded the maximum tank capacity.",
 };
 
 type WarningPanelProps = {

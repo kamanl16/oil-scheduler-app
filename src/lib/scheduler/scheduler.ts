@@ -150,6 +150,7 @@ export function generateSchedule(
     schedule,
     projectedEndInventory: fromTenths(projectedEndInventory),
     currentInventory: fromTenths(currentInventory),
+    expectedDailyConsumption: fromTenths(internalConfig.expectedDailyConsumption),
     warnings: [...warnings],
     infeasible,
     explanation,
@@ -265,6 +266,8 @@ function findLatestDonorAfter(blocks: number[], index: number) {
 
 /**
  * 
+ * Validates the scheduler configuration and calculates the expected daily consumption.
+ * 
  * @param config 
  * @returns (see {@link InternalConfig} for details)
  */
@@ -276,6 +279,8 @@ function validateConfig(config: SchedulerConfig | undefined): InternalConfig {
     throw new Error("Days must be a positive integer.");
   }
 
+  const expectedDailyConsumption = (config.nomination + config.startingInventory) / config.days;
+  
   return {
     days: config.days,
     nomination: toNonNegativeTenths(config.nomination, "Nomination"),
@@ -285,7 +290,7 @@ function validateConfig(config: SchedulerConfig | undefined): InternalConfig {
       "Starting inventory",
     ),
     expectedDailyConsumption: toNonNegativeTenths(
-      config.expectedDailyConsumption,
+      expectedDailyConsumption,
       "Expected daily consumption",
     ),
     maxCapacity: config.maxCapacity !== undefined ? toNonNegativeTenths(config.maxCapacity, "Maximum capacity") : undefined

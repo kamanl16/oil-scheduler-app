@@ -65,13 +65,6 @@ export function SchedulerForm({
           onChange={(value) => updateField("startingInventory", value)}
         />
         <NumberField
-          label="Expected daily consumption"
-          value={config.expectedDailyConsumption}
-          min={0}
-          step={0.1}
-          onChange={(value) => updateField("expectedDailyConsumption", value)}
-        />
-        <NumberField
           label="Maximum capacity (optional)"
           value={config.maxCapacity}
           min={0}

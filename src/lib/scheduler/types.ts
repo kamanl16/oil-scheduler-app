@@ -4,7 +4,6 @@ export type SchedulerConfig = {
   nomination: number;
   unitSize: number;
   startingInventory: number;
-  expectedDailyConsumption: number;
   maxCapacity?: number;
 };
 
@@ -36,6 +35,7 @@ export type SchedulerResult = {
   schedule: ScheduleDay[];
   projectedEndInventory: number;
   currentInventory: number;
+  expectedDailyConsumption: number;
   warnings: SchedulerWarning[];
   infeasible: boolean;
   explanation: string[];

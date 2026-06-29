@@ -9,7 +9,6 @@ const defaultConfig: SchedulerConfig = {
   nomination: 295,
   unitSize: 50,
   startingInventory: 105,
-  expectedDailyConsumption: 80,
 };
 
 function formatValue(value: number) {
@@ -61,8 +60,13 @@ export function useScheduler() {
   }
 
   function handleGenerateNoise() {
+    if (!result) {
+      setError("Please generate a schedule first.");
+      return;
+    }
+
     setActualConsumption(
-      formatValue(generateNoisyConsumption(config.expectedDailyConsumption, config.unitSize))
+      formatValue(generateNoisyConsumption(result.expectedDailyConsumption, config.unitSize))
     );
   }
 
