@@ -1,75 +1,40 @@
-# React + TypeScript + Vite
+# Oil Delivery Scheduler
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight web application designed to generate and continuously recalculate a daily oil delivery schedule based on variable real-world consumption rates.
 
-Currently, two official plugins are available:
+The core objective of this app is to maintain a non-negative inventory while striving to spread deliveries evenly and hit a monthly nomination target. The scheduling logic is built as a cleanly separated, highly testable module independent of the UI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Live Demo
+Check out the live application here: https://oil-scheduler-app.vercel.app/
 
-## React Compiler
+## How to Run It
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Install dependencies:
+   ```bash
+   npm install
+2. Start the development server:
+   ```bash
+   npm run dev
+3. Open your browser to http://localhost:5173 (or the port provided in your terminal).
 
-## Expanding the ESLint configuration
+## Key Assumptions & Design Decisions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To resolve the inherent tension between the assignment's objectives, the scheduling engine relies on the following logic and assumptions:
+- The system prioritizes operational safety (preventing a negative inventory) over capital efficiency (ending near zero). If forced to choose, **the algorithm always rounds deliveries up**, actively accepting a positive end-of-month surplus to mathematically guarantee the tank never runs dry.
+- The algorithm assumes the **expected daily consumption remains a constant**, unchanging average for all unplanned future days.
+  - Trade-off: Sacrifice the ability to react to ongoing trends.
+- When distributing "extra" delivery blocks across the remaining days, the algorithm **centers them proportionally** across the interval rather than arbitrarily front-loading or back-loading them.
+- If a historical actual causes a future projected stockout, the scheduler repairs the baseline by pulling a delivery block backward in time. It assumes **pulling from the farthest available future date** is the optimal move to preserve near-term schedule balance.
+  - Trade-off: Sacrifice late-month flexibility.
+- If inventory drops below zero and no future blocks are available to pull forward, the logic **spawns a new block "out of thin air" for that day**. This mathematically guarantees the "never negative" hard constraint is never breached.
+- The logic drives the future schedule against the expectedDailyConsumption as a proxy for targeting the total Nomination. If historical actuals result in overshooting the total nomination, **future deliveries are clamped to 0**, and an overshoot warning is flagged rather than breaking the schedule.
+- To prevent floating-point calculation errors, all inputs (which may have up to 1 decimal place) are **scaled by a factor of 10** into whole integers for the internal mathematical operations, then scaled back down for the UI.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## What I'd Do With More Time (Extensions)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- I would update the UI to treat historical stockouts or capacity breaches as hard data-entry errors, blocking schedule generation until the user corrects physically impossible historical data.
+- I would implement a fail-fast pattern that halts the scheduling loop entirely and renders a dedicated error state if a scenario is determined to be globally infeasible.
+- I would replace the current "emergency spawn" logic with explicit logistics parameters (e.g., maxDailyDeliveries) to better reflect physical dispatch limitations.
+- I would implement time-series models (e.g., weighted moving averages) to allow the system to react to momentum like seasonal weather shifts.
+- I would add interactive tooltips to help users understand why the schedule shifted, transforming the tool into an intuitive dispatcher dashboard.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
